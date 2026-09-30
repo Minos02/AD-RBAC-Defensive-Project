@@ -125,32 +125,22 @@ gpresult /r                        # confirmed the correct GPO was applied
 
 ## 🖼️ Screenshots
 
-*(Add these image files into a folder named `screenshots/` in this repo, then they'll display automatically below)*
+### HR
+| Policy Linked (GPMC) | GPO Settings | Live Enforcement |
+|---|---|---|
+| ![HR Policy](HR%20Policy%20.png) | ![HR Rules](HR%20Rules%20.png) | ![HR Rule implemented](HR%20Rule%20implemet.png) |
 
-```markdown
-### Lab Setup
-![UTM VMs running](screenshots/utm-vms-running.png)
+### IT
+| Policy Linked (GPMC) | GPO Settings | Live Enforcement |
+|---|---|---|
+| ![IT Policy](IT%20Policy%20.png) | ![IT Rules](IT%20Rules%20.png) | ![IT Rule implemented](IT%20Rule%20implement%20.png) |
 
-### Active Directory Structure
-![OU structure in ADUC](screenshots/aduc-ou-tree.png)
+### Finance
+| Organizational Unit | Policy Linked (GPMC) | GPO Settings |
+|---|---|---|
+| ![Finance OU](Finance%20OU.png) | ![Finance Policy](Finance%20Policy%20.png) | ![Finance Rules](Finance%20Rules%20.png) |
 
-### Policy Enforcement in Action
-![HR blocked from cmd](screenshots/hr-cmd-blocked.png)
-![Finance blocked from Control Panel](screenshots/finance-control-panel-blocked.png)
-
-### Troubleshooting: Before & After
-![Domain not available error](screenshots/domain-not-available-error.png)
-![Fixed DNS and successful login](screenshots/dns-fixed-login-success.png)
-```
-
-**Recommended shots to include, in this order:**
-1. **UTM window showing all 3 VMs running** (Server, Windows 11, Windows 7) — sets the scene
-2. **ADUC tree view** with HR/IT/Finance OUs visible — your org structure
-3. **One "policy working" screenshot per role** — HR's blocked cmd, IT's working cmd, Finance's blocked Control Panel — the proof the whole project rests on
-4. **The "domain isn't available" error** you actually hit, next to the fixed, successful login after the DNS fix — this before/after pair tells the troubleshooting story visually without anyone needing to read the full PDF
-5. *(Optional)* a simple network diagram — even a basic box-and-arrow drawing of Server ↔ Client on the same subnet — helps explain the bridging fix at a glance
-
-Once the images are in place using the markdown above, GitHub renders them inline automatically — no extra formatting needed.
+*(Images are uploaded directly in the repo's root folder — filenames with spaces are URL-encoded as `%20` in the links above so they display correctly.)*
 
 ## 🔭 What's Next
 
