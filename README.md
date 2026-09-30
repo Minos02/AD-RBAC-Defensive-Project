@@ -68,6 +68,16 @@ Most Active Directory home labs assume an Intel/x86 machine with VMware or Virtu
 - Networking between VMs had to be manually aligned — UTM defaults to giving VMs separate virtual adapters, which silently breaks domain communication if the DC and client aren't bridged onto the *same* virtual network
 - This project's real troubleshooting work (below) largely stems from Apple Silicon virtualization quirks rather than AD misconfiguration alone — proof that the lab was built and debugged first-hand, not just followed from a guide
 
+### 💿 Sourcing a Windows Server ISO for ARM
+
+There is no official Windows Server ISO for Apple Silicon (ARM64) — Microsoft only publishes x86_64 media. After extensive searching, a working ARM64-compatible build was sourced through **[UUP Dump](https://uupdump.net)**, which compiles Windows builds directly from Microsoft's own update servers. Finding a build that was both ARM-compatible *and* stable enough to run Server roles (AD DS, DNS, GPMC) took significant trial and error, since most publicly shared "ARM Windows Server" links elsewhere online were outdated, incomplete, or mislabeled.
+
+### 📶 Bridged Networking Fix — Wi-Fi Chip Limitation
+
+UTM's **Bridged Networking** mode (needed so VMs get real IPs on the same network segment and can find each other reliably) failed intermittently when using the **Mac's built-in Apple Silicon Wi-Fi chip** — a known limitation, since Apple's internal Wi-Fi driver doesn't fully support the promiscuous/bridged mode that hypervisors rely on. This caused the DC and client VMs to sit on inconsistent subnets and silently fail to reach each other.
+
+**Fix:** switched to an **external USB Wi-Fi adapter** instead of the built-in chip. External adapters generally expose proper bridged-mode support to macOS, which UTM can then use directly — this immediately stabilized VM-to-VM connectivity and resolved the subnet mismatch issues seen during domain join and Group Policy testing.
+
 ## 🔧 Troubleshooting Highlights
 
 Domain connectivity broke completely at one point with a **"domain isn't available"** login error. Root-caused and fixed as follows:
@@ -107,11 +117,40 @@ gpresult /r                        # confirmed the correct GPO was applied
 | IT Policy application | ✅ Verified |
 | `gpresult /h` HTML export | ⚠️ Access Denied (not required for validation) |
 
-## 📄 Full Report
+## 📄 Full Report & Documentation
 
-The complete project write-up — including all screenshots, exact GPO paths, and step-by-step verification — is available here:
+📎 [`AD_RBAC_Project_Report.pdf`](./AD_RBAC_Project_Report.pdf) — complete write-up with all screenshots, exact GPO paths, and step-by-step verification
 
-📎 [`AD_RBAC_Project_Report.pdf`](./AD_RBAC_Project_Report.pdf)
+📎 [`AD_Lab_Troubleshooting_Report.pdf`](./AD_Lab_Troubleshooting_Report.pdf) — detailed log of the DNS/domain connectivity issue, root cause, and fix
+
+## 🖼️ Screenshots
+
+*(Add these image files into a folder named `screenshots/` in this repo, then they'll display automatically below)*
+
+```markdown
+### Lab Setup
+![UTM VMs running](screenshots/utm-vms-running.png)
+
+### Active Directory Structure
+![OU structure in ADUC](screenshots/aduc-ou-tree.png)
+
+### Policy Enforcement in Action
+![HR blocked from cmd](screenshots/hr-cmd-blocked.png)
+![Finance blocked from Control Panel](screenshots/finance-control-panel-blocked.png)
+
+### Troubleshooting: Before & After
+![Domain not available error](screenshots/domain-not-available-error.png)
+![Fixed DNS and successful login](screenshots/dns-fixed-login-success.png)
+```
+
+**Recommended shots to include, in this order:**
+1. **UTM window showing all 3 VMs running** (Server, Windows 11, Windows 7) — sets the scene
+2. **ADUC tree view** with HR/IT/Finance OUs visible — your org structure
+3. **One "policy working" screenshot per role** — HR's blocked cmd, IT's working cmd, Finance's blocked Control Panel — the proof the whole project rests on
+4. **The "domain isn't available" error** you actually hit, next to the fixed, successful login after the DNS fix — this before/after pair tells the troubleshooting story visually without anyone needing to read the full PDF
+5. *(Optional)* a simple network diagram — even a basic box-and-arrow drawing of Server ↔ Client on the same subnet — helps explain the bridging fix at a glance
+
+Once the images are in place using the markdown above, GitHub renders them inline automatically — no extra formatting needed.
 
 ## 🔭 What's Next
 
